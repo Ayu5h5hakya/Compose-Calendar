@@ -1,7 +1,8 @@
 package com.example.compose_calendar.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +14,27 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.compose_calendar.R
-import java.util.Calendar
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MonthPager(modifier: Modifier = Modifier, daysList: List<Int>) {
+fun MonthPager(modifier: Modifier = Modifier,
+               daysList: List<Int>,
+               onDayClick: (Int) -> Unit,
+               onDayLongClick: (Int) -> Unit,
+               onPageChanged: (Int) -> Unit,) {
     val pagerState = rememberPagerState(pageCount = {12})
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect {page ->
+            onPageChanged(page)
+        }
+    }
+
     HorizontalPager(modifier = modifier, state = pagerState) { page ->
         LazyColumn {
             items(6) { colIndex ->
@@ -34,7 +44,13 @@ fun MonthPager(modifier: Modifier = Modifier, daysList: List<Int>) {
                         if(colIndex * 7 + rowIndex < daysList.size)
                             Box(Modifier
                                 .width(48.dp),contentAlignment = Alignment.Center,) {
-                                Day(day = daysList[colIndex * 7 + rowIndex])
+                                Day(day = daysList[colIndex * 7 + rowIndex], modifier = Modifier.combinedClickable(
+                                    onLongClick = {
+                                        onDayLongClick(daysList[colIndex * 7 + rowIndex])
+                                    }
+                                ) {
+                                    onDayClick(daysList[colIndex * 7 + rowIndex])
+                                })
                             }
                     }
                 }
@@ -44,6 +60,6 @@ fun MonthPager(modifier: Modifier = Modifier, daysList: List<Int>) {
 }
 
 @Composable
-fun Day(day : Int) {
-    Text("$day", Modifier.padding(8.dp))
+fun Day(modifier: Modifier = Modifier,day : Int) {
+    Text("$day", modifier = modifier.padding(8.dp))
 }

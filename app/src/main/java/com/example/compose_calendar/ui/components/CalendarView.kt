@@ -1,5 +1,6 @@
 package com.example.compose_calendar.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,9 @@ fun CalendarView(modifier: Modifier = Modifier) {
     Column (modifier = modifier){
         Row (verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),
             ){
             Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft, "arrow left", modifier = Modifier.clickable {
                 calendar = calendar.plusMonths(1)
@@ -39,7 +42,9 @@ fun CalendarView(modifier: Modifier = Modifier) {
             })
         }
         Row(
-            modifier= Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            modifier= Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceAround) {
             Text("M")
             Text("T")
@@ -49,7 +54,17 @@ fun CalendarView(modifier: Modifier = Modifier) {
             Text("S")
             Text("S")
         }
-        MonthPager(daysList = calendar.dayList())
+        MonthPager(
+            daysList = calendar.dayList(),
+            onDayClick = { day ->
+                Log.d("monthpager", "CalendarView: click $day")
+            },
+            onDayLongClick = { day ->
+                Log.d("monthpager", "CalendarView: long click $day")
+            }
+            ) { page ->
+            Log.d("monthpager", "CalendarView: $page")
+        }
     }
 }
 
