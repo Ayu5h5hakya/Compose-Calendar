@@ -33,10 +33,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_calendar.ui.components.Calendar
+import com.example.compose_calendar.ui.components.Month
 import com.example.compose_calendar.ui.theme.ComposecalendarTheme
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -83,8 +83,9 @@ fun CalendarView(modifier: Modifier) {
                                 modifier = Modifier
                                     .clickable {
                                         coroutineScope.launch {
-                                            currentPage--
-                                            pagerState.animateScrollToPage(currentPage)
+                                            var newPage = currentPage
+                                            newPage--
+                                            pagerState.animateScrollToPage(newPage)
                                         }
                                     })
                             Spacer(Modifier.width(10.dp))
@@ -93,8 +94,9 @@ fun CalendarView(modifier: Modifier) {
                                 "arrow right",
                                 modifier = Modifier.clickable {
                                     coroutineScope.launch {
-                                        currentPage++
-                                        pagerState.animateScrollToPage(currentPage)
+                                        var newPage = currentPage
+                                        newPage++
+                                        pagerState.animateScrollToPage(newPage)
                                     }
                                 })
                         }

@@ -53,7 +53,7 @@ fun Calendar(modifier: Modifier = Modifier,
             Text("S", style = MaterialTheme.typography.titleMedium)
             Text("S", style = MaterialTheme.typography.titleMedium)
         }
-        HorizontalPager(state = pagerState) {
+        HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) {
             LazyColumn {
                 items(6) { colIndex ->
                     LazyRow (horizontalArrangement = Arrangement.SpaceEvenly,
