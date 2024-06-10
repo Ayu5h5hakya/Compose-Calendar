@@ -1,32 +1,25 @@
 package com.example.compose_calendar.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.compose_calendar.R
+import com.example.compose_calendar.model.Date
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,7 +28,7 @@ fun Calendar(modifier: Modifier = Modifier,
              calendar: LocalDateTime,
              pagerState: PagerState = rememberPagerState(initialPage = 500,pageCount = { 1000 }),
              header: @Composable ColumnScope.() -> Unit = {},
-             dayBuilder: @Composable (Int) -> Unit = {},
+             dayBuilder: @Composable (Date) -> Unit = {},
              onPageChange: (Int) -> Unit = {},) {
     val daysList = calendar.dayList()
 
@@ -78,28 +71,42 @@ fun Calendar(modifier: Modifier = Modifier,
 }
 
 
-fun LocalDateTime.dayList() : List<Int>{
-    var daysList = mutableListOf<Int>()
+fun LocalDateTime.dayList() : List<Date>{
+    var daysList = mutableListOf<Date>()
     val firstDateOfMonth =  this.withDayOfMonth(1)
+    val nextMonth = firstDateOfMonth.plusMonths(1)
     val firstDayOfMonth = firstDateOfMonth.dayOfWeek.value
     val lastDateOfLastMonth = this.withDayOfMonth(1).minusDays(1)
     val lastDateOfMonth = firstDateOfMonth.plusMonths(1).minusDays(1)
 
     var i = 1
     while (i <= lastDateOfMonth.dayOfMonth) {
-        daysList.add(i)
+        daysList.add(Date(lastDateOfMonth.year,
+            lastDateOfMonth.monthValue,
+            i,
+            true))
         i++
     }
 
     var start = lastDateOfLastMonth.dayOfMonth
-    while(daysList.indexOf(1) != firstDayOfMonth-1) {
-        daysList.add(0,start)
+    while(daysList.indexOfFirst { it.day == 1 } != firstDayOfMonth-1) {
+        daysList.add(0,Date(
+            lastDateOfLastMonth.year,
+            lastDateOfLastMonth.monthValue,
+            start,
+            false
+        ))
         start--
     }
 
     var j = 1
     while(daysList.size<= 42) {
-        daysList.add(j)
+        daysList.add(Date(
+            nextMonth.year,
+            nextMonth.monthValue,
+            j,
+            false
+        ))
         j++
     }
     return daysList

@@ -7,15 +7,21 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_calendar.ui.components.Calendar
 import com.example.compose_calendar.ui.theme.ComposecalendarTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
@@ -68,10 +75,31 @@ fun CalendarView(modifier: Modifier) {
                         .fillMaxWidth()
                         .padding(vertical = 10.dp, horizontal = 16.dp),
                 ) {
-//                    Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                "arrow left",
+                                modifier = Modifier
+                                    .clickable {
+                                        coroutineScope.launch {
+                                            currentPage--
+                                            pagerState.animateScrollToPage(currentPage)
+                                        }
+                                    })
+                            Spacer(Modifier.width(10.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                "arrow right",
+                                modifier = Modifier.clickable {
+                                    coroutineScope.launch {
+                                        currentPage++
+                                        pagerState.animateScrollToPage(currentPage)
+                                    }
+                                })
+                        }
+                        Text(calendar.month.name.lowercase().replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.headlineLarge)
                         Text("${calendar.year}",  style = MaterialTheme.typography.headlineSmall)
-                        Text("September", style = MaterialTheme.typography.headlineLarge)
                     }
                     Column(Modifier
                         .background(
@@ -83,43 +111,22 @@ fun CalendarView(modifier: Modifier) {
                         Text("20",style = MaterialTheme.typography.titleLarge.copy(fontSize = 48.sp))
                         Text("SEPT",style = MaterialTheme.typography.titleMedium)
                     }
-//                    Icon(
-//                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-//                        "arrow left",
-//                        modifier = Modifier
-//                            .clickable {
-//                            coroutineScope.launch {
-//                                currentPage--
-//                                pagerState.animateScrollToPage(currentPage)
-//                            }
-//                        })
-//                    Spacer(Modifier.width(10.dp))
-//                    Icon(
-//                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                        "arrow right",
-//                        modifier = Modifier.clickable {
-//                            coroutineScope.launch {
-//                                currentPage++
-//                                pagerState.animateScrollToPage(currentPage)
-//                            }
-//                        })
                 }
             }
         },
-        dayBuilder = { day ->
+        dayBuilder = { date ->
+            val bgColor = if(date.enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.outlineVariant
             Box(Modifier
                 .padding(vertical = 4.dp)
                 .width(48.dp)
-                .background(MaterialTheme.colorScheme.onSurfaceVariant,shape = RoundedCornerShape(10.dp)),
+                .background(bgColor,shape = RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center,) {
-                Day(day = day, modifier = Modifier.combinedClickable(
+                Day(day = date.day, modifier = Modifier.combinedClickable(
                     onLongClick = {
-                        val date = calendar.withDayOfMonth(day)
-                        Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.dayOfMonth}")
+                        Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.day}")
                     },
                     onClick = {
-                        val date = calendar.withDayOfMonth(day)
-                        Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.dayOfMonth}")
+                        Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.day}")
                     },
                 ))
             }
@@ -132,7 +139,7 @@ fun CalendarView(modifier: Modifier) {
 
 
 @Composable
-fun Day(modifier: Modifier = Modifier,day : Int, isCurrentMonth: Boolean = true) {
+fun Day(modifier: Modifier = Modifier,day : Int) {
     Text("$day", modifier = modifier.padding(8.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
 }
 
