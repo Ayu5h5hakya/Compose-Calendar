@@ -24,13 +24,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -38,7 +38,11 @@ import java.time.LocalDateTime
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CalendarView(modifier: Modifier = Modifier) {
+fun CalendarView(modifier: Modifier = Modifier,
+                 leftIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                 rightIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                 onDateLongClick: (LocalDateTime) -> Unit = {},
+                 onDateClick: (LocalDateTime) -> Unit = {},) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(initialPage = 500,pageCount = { 1000 })
     var currentPage by remember { mutableIntStateOf(500) }
@@ -59,14 +63,14 @@ fun CalendarView(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp),
             ){
-            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft, "arrow left", modifier = Modifier.clickable {
+            Icon(imageVector = leftIcon, "arrow left", modifier = Modifier.clickable {
                 coroutineScope.launch {
                     currentPage--
                     pagerState.animateScrollToPage(currentPage)
                 }
         })
         Text("${calendar.month} ${calendar.year}")
-            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "arrow right", modifier = Modifier.clickable {
+            Icon(imageVector = rightIcon, "arrow right", modifier = Modifier.clickable {
                 coroutineScope.launch {
                     currentPage++
                     pagerState.animateScrollToPage(currentPage)
@@ -98,10 +102,10 @@ fun CalendarView(modifier: Modifier = Modifier) {
                                     .width(48.dp),contentAlignment = Alignment.Center,) {
                                     Day(day = day, modifier = Modifier.combinedClickable(
                                         onLongClick = {
-                                            Log.d("monthpager", "CalendarView: long click $day")
+                                            onDateLongClick(calendar.withDayOfMonth(day))
                                         }
                                     ) {
-                                        Log.d("monthpager", "CalendarView: click $day")
+                                        onDateClick(calendar.withDayOfMonth(day))
                                     })
                                 }
                         }

@@ -1,6 +1,7 @@
 package com.example.compose_calendar
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.CalendarView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,7 +27,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposecalendarTheme {
                 Scaffold { innerPadding ->
-                    CalendarView(Modifier.padding(innerPadding))
+                    CalendarView(Modifier.padding(innerPadding),
+                        onDateClick = { date ->
+                            Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.dayOfMonth}")
+                        },
+                        onDateLongClick = { date ->
+                            Log.d("Scaffold", "onCreate: ${date.year} ${date.month} ${date.dayOfMonth}")
+                        })
                 }
             }
         }
