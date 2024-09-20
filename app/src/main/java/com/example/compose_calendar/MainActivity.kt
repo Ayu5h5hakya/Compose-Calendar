@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.compose_calendar.ui.components.CalendarView
 import com.example.compose_calendar.ui.theme.ComposecalendarTheme
 import java.util.Calendar
 
@@ -30,13 +31,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun CalendarView() {
-    val pageState = rememberPagerState(pageCount = {10})
-    HorizontalPager(state = pageState) {page ->
-        Text("page $page",
-            modifier = Modifier.fillMaxSize(),
-            )
-    }
-}
