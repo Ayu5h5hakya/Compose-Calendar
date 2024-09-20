@@ -25,7 +25,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ComposecalendarTheme {
-                CalendarView()
+                Scaffold { innerPadding ->
+                    CalendarView(Modifier.padding(innerPadding))
+                }
             }
         }
     }
