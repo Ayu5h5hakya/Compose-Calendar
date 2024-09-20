@@ -12,7 +12,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +24,7 @@ import androidx.compose.ui.unit.dp
 fun CalendarView(modifier: Modifier = Modifier) {
     Column (modifier = modifier){
         Row (verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
             ){
             Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft, "arrow left")
@@ -34,27 +33,17 @@ fun CalendarView(modifier: Modifier = Modifier) {
         }
         Row(
             modifier= Modifier.fillMaxWidth().padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceAround) {
+            Text("S")
             Text("M")
             Text("T")
             Text("W")
             Text("T")
             Text("F")
             Text("S")
-            Text("S")
 
         }
         MonthPager()
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MonthPager(modifier: Modifier = Modifier) {
-    val pagerState = rememberPagerState(pageCount = {12})
-    HorizontalPager(modifier = modifier, state = pagerState) { page ->
-        Text("page $page",
-            modifier = Modifier.fillMaxSize())
     }
 }
 
